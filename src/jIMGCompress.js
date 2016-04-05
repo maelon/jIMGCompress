@@ -1,10 +1,6 @@
 /*===================================================================
 #    FileName: jIMGCompress.js
 #      Author: Maelon.J
-#       Email: maelon.j@gmail.com
-#  CreateTime: 2016-04-05 18:21
-# Description: 图片压缩
-===================================================================*/
 
 ((scope = {}) => {
 
@@ -12,9 +8,10 @@
     * public
     * file: 传入input的file对象
     * option: {
-    *   width: 最大压缩宽度
-    *   height: 最大压缩高度
-    *   limitSize: 最大图片容量(字节)
+    *   width: 最大压缩宽度 默认600
+    *   height: 最大压缩高度 默认自适应
+    *   quality: 压缩质量 默认0.9
+    *   limitSize: 最大图片容量(字节) 默认无限制
     * }
     * callback: 压缩完成回调
     * errorback: 发生错误回调
@@ -38,21 +35,59 @@
         if(file) {
             if(file instanceof File) {
                 if(file.size) {
+                    this._option = option;
+                    let finishCall = () {
+                    };
+                    let errorCall = () {
+                    };
                     if(file.type !== '') {
+                        this._compress(file, finishCall, errorCall);
                     } else {
+                        this._checkFileType(file, (type) => {
+                            this._typeType = type;
+                            this._fileName = file.filename + this._fileExtEnum[type];
+                            let blob = new Blob([file], { type: type });
+                            this._compress(blob, finishCall, errorCall);
+                        }, (error) => {
+                            this._throwError(error, errorback);
+                        });
                     }
                 } else {
-                    throw new Error('file error: file content is empty');
+                    let error ={
+                        type: 'emptyfile',
+                        msg: 'file error: file content is empty'
+                    };
+                    this._throwError(error, errorback);
                 }
             } else {
-                throw new Error('argument type error: not a File type');
+                let error ={
+                    type: 'notfile',
+                    msg: 'argument type error: not a File type'
+                };
+                this._throwError(error, errorback);
             }
         } else {
-            throw new Error('argument error: file is null');
+            let error = {
+                type: 'nofile',
+                msg: 'argument error: file is null'
+            };
+            this._throwError(error, errorback);
         }
     };
 
+    /**
+    * public
+    * 添加头信息描述
+    */
+    scope.addFileHeaderEnum = () => {
+    };
+
+    scope._option = {
+        'width': 600,
+        'quality': 0.9
+    };
     scope._fileName = ''; //文件名
+    scope._fileType = ''; //文件类型
     scope._fileSize = 0; //压缩后文件容量(字节)
     scope._width = 0; //压缩后文件宽度
     scope._height = 0; //压缩后文件高度
@@ -65,79 +100,145 @@
     /**
     * 文件类型枚举
     */
-    scope._FileTypeEnum = {
-        'ffd8 ffe* **** ****': 'image/jpeg',
-        '8950 4e47 0d0a 1a0a': 'image/png',
-        '4749 46** **** ****': 'image/gif',
-        '424d **** **** ****': 'image/bmp'
+    scope._fileTypeEnum = {
+        'ffd8ffe*********': 'image/jpeg',
+        '89504e470d0a1a0a': 'image/png',
+        '474946**********': 'image/gif',
+        '424d************': 'image/bmp'
+    };
+
+    scope._fileExtEnum = {
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/gif': 'gif',
+        'image/bmp': 'bmp'
     };
 
     /**
     * private
     * 检测文件类型
     */
-    scope._checkFileType = (file, callback) => {
-        var fr = new FileReader();
-        fr.addEventListener('load', function (e) {
-            var result = e.target.result;
+    scope._checkFileType = (file, callback, errorback) => {
+        try {
+            let fr = new FileReader();
+            fr.addEventListener('load', function (e) {
+                let buffer = e.target.result;
 
-            //文件头信息判断文件类型，如果直接获取不到文件类型
-            var data = new DataView(e.target.result, 0);
-            var d = [];
-            d.push(data.getUint8(0));
-            d.push(data.getUint8(1));
-            d.push(data.getUint8(2));
-            d.push(data.getUint8(3));
-            d.push(data.getUint8(4));
-            alert(d.join(','));
-            compressIMG(new Blob([e.target.result], {type: 'image/jpeg'})); //type参数与上面判断类型有关
-        });
-        fr.readAsArrayBuffer(file);
+                //文件头信息判断文件类型，如果直接获取不到文件类型
+                try {
+                    var data = new DataView(buffer, 0);
+                    var bts = [];
+                    //获取文件前8个字节，转成16进制字符串，并与fileTypeEnum匹配
+                    for(let i = 0; i < 8; i++) {
+                        bts.push((val = '0' + data.getUint8(i).toString(16)) => val.substring(val.length - 2));
+                    }
+                    let typeFeature = bts.join();
+                    let type = '';
+                    for(let s in this._fileTypeEnum) {
+                        let regexp = new RegExp('^' + s.replace((/\*/gi), '\\w') + '$', 'ig');
+                        if(regexp.test(typeFeature)) {
+                            type = this._fileTypeEnum[s];
+                            break;
+                        }
+                    }
+                    //callback(new Blob([e.target.result], {type: 'image/jpeg'}));
+                    if(type) {
+                        callback(type);
+                    } else {
+                        let error ={
+                            type: 'badfiletype',
+                            msg: 'file type error: cannot analysis file type'
+                        };
+                        this._throwError(error, errorback);
+                    }
+                } catch (e) {
+                    let error = {
+                        type: 'apierror',
+                        msg: 'api error: not support DataView api'
+                    };
+                    this._throwError(error, errorback);
+                }
+            });
+            fr.readAsArrayBuffer(file);
+        } catch (e) {
+            let error = {
+                type: 'apierror',
+                msg: 'api error: not support FileReader api'
+            };
+            this._throwError(error, errorback);
+        }
     };
 
-                function compressIMG(blob) {
-                try{
-                alert('压缩前大小：' + blob.size/1024 + 'K');
-                var img = document.createElement('img');
-                var url = URL.createObjectURL(blob);
-                img.addEventListener('load', function (e) {
-                    var im = e.target;
-                    URL.revokeObjectURL(url);
-                    var canvas = document.createElement('canvas');
-                    alert(im.naturalWidth + '|' + im.naturalHeight);
-                    canvas.width = 300;
-                    canvas.height = 300 * im.naturalHeight / im.naturalWidth;
-                    var context = canvas.getContext('2d');
-                    context.fillStyle = "#fff";
-                    context.fillRect(0, 0, canvas.width, canvas.height);
-                    context.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    var base64 = canvas.toDataURL('image/jpeg', 0.9);
-                    alert(base64.substring(0, 60));
-                    alert('压缩后大小：' + dataURLtoBlob(base64).size / 1024 + 'K');
-                    previewIMG(base64);
-                });
-                img.src = url;
-                }catch(e) {
-                    alert(e);
-                }
-            }
+    /**
+    * private
+    * 使用canvas压缩出jpg
+    */
+    scope._compress = (blob, callback, errorback) => {
+        try {
+            this._originFileSize = blob.size;
+            let image = document.createElement('img');
+            let url = URL.createObjectURL(blob);
+            image.addEventListener('load', (e) => {
+                URL.revokeObjectURL(url);
+                let img = e.target;
+                this._originWidth = img.naturalWidth;
+                this._originHeight = img.naturalHeight;
+                let canvas = document.createElement('canvas');
+                //
+                canvas.width = 300;
+                canvas.height = 300 * im.naturalHeight / im.naturalWidth;
+                //
+                let context = canvas.getContext('2d');
+                context.fillStyle = "#fff";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                let dataurl = canvas.toDataURL('image/jpeg', this._option['quality']);
+                let compressSize = dataURLtoBlob(dataurl).size;
+            });
+            image.src = url;
+        } catch(e) {
+            let error = {
+                type: 'apierror',
+                msg: 'api error: not support canvas or URL api'
+            };
+            this._throwError(error, errorback);
+        }
+    };
 
-            function previewIMG(base64) {
-                var img = document.createElement('img');
-                img.addEventListener('load', function (e) {
-                    img.style="position:absolute;top:0;";
-                    document.body.appendChild(img);
-                });
-                img.src = base64;
+    /**
+    * private
+    * 转data url为blob
+    */
+    scope._dataURL2Blob = (dataurl) => {
+        try {
+            let arr = dataurl.split(',');
+            let mime = arr[0].match(/:(.*?);/)[1];
+            let bstr = atob(arr[1]);
+            let n = bstr.length;
+            let u8arr = new Uint8Array(n);
+            while(n--){
+                u8arr[n] = bstr.charCodeAt(n);
             }
+            return new Blob([u8arr], { type: mime });
+        } catch(e) {
+            let error = {
+                type: 'apierror',
+                msg: 'api error: not support atob or Unit8Array api'
+            };
+            this._throwError(error, errorback);
+        }
+    };
 
-            function dataURLtoBlob(dataurl) {
-                var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-                    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-                while(n--){
-                    u8arr[n] = bstr.charCodeAt(n);
-                }
-                return new Blob([u8arr], {type:mime});
-            }
+    /**
+    * private
+    * 抛出异常，或异常回调
+    */
+    scope._throwError = (error = {}, errorback) => {
+        if(errorback && typeof errorback === 'function') {
+            errorback(error);
+        } else {
+            throw new Error(error['msg']);
+        }
+    };
 
 })(window.jIMGCompress);
