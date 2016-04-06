@@ -1,0 +1,123 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <script type="text/javascript" src="../build/jIMGCompress.js"></script>
+        <script type="text/javascript" src="../build/jIMGCompress.js.map"></script>
+        <style type="text/css">
+            .file {
+                position: relative;
+                display: inline-block;
+                background: #D0EEFF;
+                border: 1px solid #99D3F5;
+                border-radius: 4px;
+                padding: 4px 12px;
+                overflow: hidden;
+                color: #1E88C7;
+                text-decoration: none;
+                text-indent: 0;
+                line-height: 20px;
+            }
+            .file input {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                opacity: 0;
+            }
+            .file:hover {
+                background: #AADFFD;
+                border-color: #78C3F3;
+                color: #004974;
+                text-decoration: none;
+            }
+        </style>
+    </head>
+    <body>
+        <p>
+            <a class="file" href="javascript:void(0);">
+                <input id="file_input" type="file"> 点击上传 </a>
+        </p>
+        <p>
+            <a id="image_source_link" href="#" target="_blank">原图预览</a>
+            <a id="image_link" href="#" target="_blank">压缩图预览</a>
+        </p>
+        <table>
+            <tr>
+                <td>压缩最大宽度</td>
+                <td>
+                    <input id="option_width" type="text" value="600">
+                </td>
+            </tr>
+            <tr>
+                <td>压缩最大高度</td>
+                <td>
+                    <input id="option_height" type="text" value="auto">
+                </td>
+            </tr>
+            <tr>
+                <td>压缩质量</td>
+                <td>
+                    <input id="option_quality" type="text" value="0.9">
+                </td>
+            </tr>
+            <tr>
+                <td>压缩最大容量</td>
+                <td>
+                    <input id="option_size" type="text" value="">
+                </td>
+            </tr>
+        </table>
+        <p>
+            <button id="start" type="button" disabled="true">开始压缩</button>
+            <button id="clear" type="button" disabled="true">清除</button>
+        </p>
+        <p id="image_path">请上传图片</p>
+        <p>压缩结果</p>
+        <table border="1">
+            <tr>
+                <td>图片名</td>
+                <td id="image_name"></td>
+            </tr>
+            <tr>
+                <td>原始图片类型</td>
+                <td id="image_source_type"></td>
+            </tr>
+            <tr>
+                <td>原始图片宽度</td>
+                <td id="image_source_width">0</td>
+            </tr>
+            <tr>
+                <td>原始图片高度</td>
+                <td id="image_source_height">0</td>
+            </tr>
+            <tr>
+                <td>原始图片容量</td>
+                <td id="image_source_size">0</td>
+            </tr>
+            <tr>
+                <td>压缩图片类型</td>
+                <td id="image_type"></td>
+            </tr>
+            <tr>
+                <td>压缩图片宽度</td>
+                <td id="image_width">0</td>
+            </tr>
+            <tr>
+                <td>压缩图片高度</td>
+                <td id="image_height">0</td>
+            </tr>
+            <tr>
+                <td>压缩图片容量</td>
+                <td id="image_size">0</td>
+            </tr>
+        </table>
+        <div>
+            <img id="image_preview" src="">
+        </div>
+        <div>
+            <img id="image_source_preview" src="">
+        </div>
+        <script type="text/javascript" src="test.js"></script>
+    </body>
+</html>
