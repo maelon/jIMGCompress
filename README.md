@@ -4,6 +4,10 @@
     本工具是在做微信h5中图片上传时无法直接获取文件类型时的解决方案（部分android手机）
     压缩后的文件在build目录下
     如果不够用，可以修改源码，里面有对应的注释
+## test demo
+   npm install
+   npm run test
+   http://localhost:8000/test/test.html
 ## api
 ### jIMGCompress.compress(file, option, callback, errorback)
     压缩图片

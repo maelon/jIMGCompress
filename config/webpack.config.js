@@ -3,10 +3,10 @@ var path = require('path');
 
 module.exports = {
     'entry': {
-        'jIMGCompress': ['./src/jIMGCompress.js']
+        'jIMGCompress': path.resolve(__dirname, '../src/jIMGCompress.js')
     },
     'output': {
-        'path': path.resolve(__dirname, 'build'),
+        'path': path.resolve(__dirname, '../build'),
         'filename': '[name].js',
         'sourceMapFilename': '[name].js.map'
     },
