@@ -48,7 +48,7 @@
 ### jIMGCompress.addFileHeaderEnum(feature, type, ext)
     添加文件类型.内置'image/jpeg''image/png''image/gif''image/bmp',如果不够，可以使用此接口动态添加
     `feature` String类型
-     文件头信息17进制的字符描述，例如'ffd8ffe*********'表示image/jpeg文件头
+     文件头信息16进制的字符描述，例如'ffd8ffe*********'表示image/jpeg文件头
     `type` String类型
      文件类型，例如'image/jpeg'
     `ext` String类型
