@@ -3,11 +3,9 @@
   "version": "1.0.0",
   "description": "image compress util",
   "main": "jIMGCompress.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
-    "test": "node ./config/webpack.test.config.js"
+    "dev": "webpack-dev-server --config ./config/webpack.dev.config.js",
+    "build": "webpack --config ./config/webpack.prod.config.js"
   },
   "repository": {
     "type": "git",
@@ -24,10 +22,10 @@
   },
   "homepage": "https://github.com/maelon/jIMGCompress#readme",
   "devDependencies": {
-    "webpack": "^1.12.14",
-    "babel-core": "^6.7.4",
-    "babel-loader": "^6.2.4",
-    "babel-preset-es2015": "^6.6.0",
-    "webpack-dev-server": "^1.14.1"
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.7"
   }
 }

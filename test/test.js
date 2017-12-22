@@ -52,7 +52,7 @@ window.onload = function() {
             option['limitSize'] = parseInt(d_option_size.value) || 1024;
         }
         d_image_path.innerText = '开始压缩';
-        window.jIMGCompress.compress(file, option, function (result) {
+        window.jimgcompress.default.compress(file, option, function (result) {
             console.log(result);
             d_image_path.innerText = '压缩结束';
             d_name.innerText = result.fileName;
