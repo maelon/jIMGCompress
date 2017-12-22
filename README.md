@@ -1,7 +1,7 @@
 # jIMGCompress
 
-> html5图片压缩工具
-> 默认支持把`image/jpeg``image/png``image/gif``image/bmp`图片全部转为image/jpeg类型
+> html5图片压缩工具  
+> 默认支持把`image/jpeg``image/png``image/gif``image/bmp`图片全部转为image/jpeg类型  
 > 本工具提供普通压缩功能的同时，也是踩到坑时解决方案（在图片上传时部分android手机无法直接获取文件类型）
 
 ## 安装方法
@@ -10,9 +10,9 @@
 npm install jimgcompress
 ```
 
-或者在html中直接引用`dist`目录下的`jIMGCompress.min.js`文件
+或者在html中直接引用`dist`目录下的`jIMGCompress.min.js`文件  
 
-当然如果不够用，可以修改源码，代码里面有对应的注释
+当然如果不够用，可以修改源码，代码里面有对应的注释  
 
 ## test demo
 
@@ -20,7 +20,7 @@ npm install jimgcompress
 npm install
 npm run dev
 ```
-浏览器打开[http://localhost:8000/test/test.html](http://localhost:8000/test/test.html)
+浏览器打开[http://localhost:8000/test/test.html](http://localhost:8000/test/test.html)  
 在移动端可进行代理
 
 ## api
@@ -29,10 +29,12 @@ npm run dev
 
 压缩图片
 
-`file` File类型
+`file` File类型  
 文件对象，input中的file
 
-`option` Object类型
+`option` Object类型  
+压缩时会根据配置进行最佳选择  
+算法上是通过对图片每次进行0.8的缩放比例进行迭代压缩，以达到最佳要求
 ```
 {
     width: 最大压缩宽度 默认600
@@ -42,8 +44,8 @@ npm run dev
 }
 ```
 
-`callback` Function类型
-压缩完回调，回调结果：
+`callback` Function类型  
+压缩完回调，回调结果：  
 ```
 {
     fileName: 文件名
@@ -60,8 +62,8 @@ npm run dev
 }
 ```
 
-`errorback` Function类型
-压缩出错回调，回调结果：
+`errorback` Function类型  
+压缩出错回调，回调结果：  
 ```
 {
     type: String,
