@@ -1,8 +1,8 @@
 {
   "name": "jimgcompress",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "image compress util",
-  "main": "jIMGCompress.js",
+  "main": "src/jIMGCompress.js",
   "scripts": {
     "dev": "webpack-dev-server --config ./config/webpack.dev.config.js",
     "build": "webpack --config ./config/webpack.prod.config.js"

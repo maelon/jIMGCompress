@@ -10,7 +10,7 @@ config.output.chunkFilename = 'jIMGCompress.min.js';
 
 config.devtool = 'false';
 
-//config.plugins.push(new UglifyJSPlugin());
+config.plugins.push(new UglifyJSPlugin());
 config.plugins.push(new webpack.DefinePlugin({
     PRODUCTION: JSON.stringify(true)
 }));
